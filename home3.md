@@ -113,6 +113,10 @@ PGPASSWORD="test1234" psql -h 172.22.254.224 -p 5433 -U postgres test -c "select
   * https://docs.docker.com/engine/reference/run/#cmd-default-command-or-options ,
   * https://docs.docker.com/compose/compose-file/06-networks/#internal,
   * https://docs.docker.com/compose/networking/
+  * https://kubernetes.io/docs/concepts/containers/
+  * https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/containers/images/
+  * Правда при переходе на кубер от сборки докер отказываются в пользу podman https://habr.com/ru/articles/659049/
+
 * создал compose.yaml - с указанием маппинга портов, сети, образов, нужного образа postgresql с версией 15
 * запустил docker-compose
 * запускал клиент в отдельном контейнере по имени хоста, в том же контейнере, с локального хоста
