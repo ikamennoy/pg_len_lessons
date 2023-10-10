@@ -117,6 +117,8 @@ PGPASSWORD="test1234" psql -h 172.22.254.224 -p 5433 -U postgres test -c "select
   * https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/containers/images/
   * Правда при переходе на кубер от сборки докер отказываются в пользу podman https://habr.com/ru/articles/659049/
   * https://wiki.archlinux.org/title/Systemd-nspawn
+  * https://habr.com/ru/companies/yandex_praktikum/articles/570024/ eshulyndina 29 июл 2021 в 15:26 Микросервисы vs. Монолит
+  * https://vc.ru/services/696182-kak-stroit-biznes-prilozheniya-mikroservisy-monolit-i-kubernetes-legkoe-pogruzhenie-s-nulya
 
 * создал compose.yaml - с указанием маппинга портов, сети, образов, нужного образа postgresql с версией 15
 * запустил docker-compose
