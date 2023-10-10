@@ -116,6 +116,7 @@ PGPASSWORD="test1234" psql -h 172.22.254.224 -p 5433 -U postgres test -c "select
   * https://kubernetes.io/docs/concepts/containers/
   * https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/containers/images/
   * Правда при переходе на кубер от сборки докер отказываются в пользу podman https://habr.com/ru/articles/659049/
+  * https://wiki.archlinux.org/title/Systemd-nspawn
 
 * создал compose.yaml - с указанием маппинга портов, сети, образов, нужного образа postgresql с версией 15
 * запустил docker-compose
