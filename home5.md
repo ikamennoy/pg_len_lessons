@@ -281,7 +281,8 @@ sudo systemctl stop postgresql@15-main; sudo umount /opt/pgdata
 yc compute instance detach-disk --disk-name test-vol1 --name test-ubuntu-22 # отключаем диск от ВМ1
 
 yc compute instance create --name test-ubuntu-22x --metadata-from-file user-data=meta.yaml --create-boot-disk name=root-disk2,size=10G,auto-delete,image-folder
--id=standard-images,image-family=ubuntu-2204-lts --memory 2G --cores 2 --hostname upgtest2 --metadata serial-port-enable=1 --zone ru-central1-b
+-id=standard-images,image-family=ubuntu-2204-lts --memory 2G --cores 2 --hostname upgtest2 --metadata serial-port-enable=1 --zone ru-central1-b --core-fraction 50 --preemptible --platform standard-v3
+   ### https://teletype.in/@cameda/ntq8QNHIsG1 ### 
 yc compute instance add-one-to-one-nat test-
 ubuntu-22x --network-interface-index 0
 yc compute instance attach-disk --disk-name test-vol1 --name test-ubuntu-22x
