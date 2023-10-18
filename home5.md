@@ -7,6 +7,21 @@
 # Описание/Пошаговая инструкция выполнения домашнего задания: #
 - [x] создайте виртуальную машину c Ubuntu 20.04/22.04 LTS в GCE/ЯО/Virtual Box/докере
 ```sh
+echo > meta.yaml <<EOF
+#cloud-config
+users:
+  - name: uuu
+    groups: sudo
+    password: test123
+    shell: /bin/bash
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    lock_passwd: false
+    passwd: $6$rounds=4096$cqmfub.dYCnZmyQb$wNrGtu3PP6A52owXADP...
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1+72sIJ4TmXAvHCUCbMb+...
+EOF
+```
+```sh
 yc compute instance create --name test-ubuntu-22 --metadata-from-file user-data=meta.yaml --create-boot-disk name=root-disk,size=10G,auto-delete,image-folder-id=standard-images,image-family=ubuntu-2204-lts --memory 2G --cores 2 --hostname upgtest --metadata serial-port-enable=1 --zone ru-central1-b ; yc compute instance add-one-to-one-nat epd1d2tdic1jli3of3hg --network-interface-index 0
 ```
 ```console
@@ -301,4 +316,10 @@ sudo -u postgres psql testdb -c "\l+"|cat
            |          |          |             |             |            |                 | postgres=CTc/postgres |         |            |
  testdb    | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |            | libc            |                       | 7565 kB | pg_default |
 (4 rows)
+```
+
+### END ###
+```sh
+yc compute instance delete test-ubuntu-22 ; yc compute instance delete test-ubuntu-22x ; yc compute disk delete test-vol1
+
 ```
