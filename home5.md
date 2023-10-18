@@ -321,5 +321,6 @@ sudo -u postgres psql testdb -c "\l+"|cat
 ### END ###
 ```sh
 yc compute instance delete test-ubuntu-22 ; yc compute instance delete test-ubuntu-22x ; yc compute disk delete test-vol1
-
+yc vpc subnet list|grep central|cut -d "|" -f 2 |xargs -n 1 yc vpc subnet delete
+yc vpc network delete default
 ```
