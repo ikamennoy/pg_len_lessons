@@ -328,7 +328,7 @@ testdb=# SELECT relname, n_live_tup, n_dead_tup, trunc(100*n_dead_tup/(n_live_tu
  t1      |    1000000 |          0 |      0 | 2023-10-31 02:05:49.179+03
 (1 строка)
 ```
-Так как сделал vacuum вручную - автовакууму не нужно запускаться. Видно что таблица стала медленее, т.к. автовакуум еще делает analyze [autovacuum_analyze_threshold](https://postgrespro.ru/docs/postgresql/9.6/runtime-config-autovacuum)
+Видно что таблица стала медленее, т.к. автовакуум еще делает analyze [autovacuum_analyze_threshold](https://postgrespro.ru/docs/postgresql/9.6/runtime-config-autovacuum)
 
 после analyze или vacuum analyze - скорость обращения к таблицы стала намного выше.
 ```console
