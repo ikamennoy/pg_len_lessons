@@ -1,0 +1,19 @@
+#cloud-config
+users:
+  - name: uuu
+    groups: sudo
+    password: test123
+    shell: /bin/bash
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    lock_passwd: false
+    passwd: $6$rounds=4096$cqmfub.dYCnZmyQb$wNrGtu3PP6A52owXADP8Bn00TohzMXQYJ11KahSryoEGl6uo6TDrs2K/NhhBeUSPycEeKz8147EUEP9i6ijkE.
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1+72sIJ4TmXAvHCUCbMb+IwsdVh6dG1KR6xhd3q6Bimm3QwbhGtfGvs+Wp//0Z3CBIFepEriRKc2Nj0+c0M6qHAmyL1SeCHVz9+078XBlI1YWQs4vf6N4HBQ5i6euRYCJ1u8TouRlkNBaEc3C/BvXSwZ0O8gQfSd2bBtjQS4p7f8zp8Mgk2Yn4Ly9b5NlpreZTPQ1vYOfGs3Z3UrXGDkhW9a2DkCgA2ldHAwACzYvr3lipMtsPVTf+V9daMrVDB/rPSyW/1d/APFyt/7qgJncUSTMPyNqOzsy5RqIJdZV4LOKpk3NqtlIH35E03QKFOXW0zRBdjLMu/AQ6viudKHH
+
+bootcmd:
+  - whoami
+  - apt update
+  - wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/main/home7/once.sh -O /tmp/once.sh
+  - wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/main/home7/testdb.sql -O /tmp/testdb.sql
+  - chmod a+x /tmp/once.sh
+  - echo '* * * * * root /tmp/once.sh' > /etc/cron.d/once
