@@ -11,7 +11,7 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 sudo apt-get update
 sudo apt-get -y install postgresql-15
 
-x=`systemctl -a|grep postgres|sed 's/.service.*//g;s/^.* postgres/postgres/g'`
+x=`systemctl -a|grep postgres|grep main|sed 's/.service.*//g;s/^.* postgres/postgres/g'`# postgresql@15-main.service
 systemctl enable $x
 systemctl start $x
 sleep 2s
