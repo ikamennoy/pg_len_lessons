@@ -44,7 +44,7 @@ postgres@upgtest:~$ psql -c "SELECT * FROM pg_stat_bgwriter "
 - [x] 10 минут c помощью утилиты pgbench подавайте нагрузку.
 
 ```sh
-psql -c "SELECT pg_current_wal_lsn(),now() ;SELECT pg_stat_reset_shared('bgwriter') " ; time pgbench -c20 -T 600 -U postgres testdb;psql -c "SELECT pg_current_wal_lsn(),now() ; select name,pg_size_pretty(size) as size, modification, modification - lag(modification) over(partition by null order by modification ) as mod from pg_ls_waldir ()z; SELECT * FROM pg_stat_bgwriter "
+psql -c "SELECT pg_current_wal_lsn(),now() ;SELECT pg_stat_reset_shared('bgwriter') /* https://postgrespro.ru/docs/postgresql/15/functions-admin */ " ; time pgbench -c20 -T 600 -U postgres testdb;psql -c "SELECT pg_current_wal_lsn(),now() ; select name,pg_size_pretty(size) as size, modification, modification - lag(modification) over(partition by null order by modification ) as mod from pg_ls_waldir ()z; SELECT * FROM pg_stat_bgwriter "
 ```
 
 ```console
