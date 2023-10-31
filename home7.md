@@ -178,25 +178,6 @@ max_wal_size = 1GB
 
 В целом скорее нет эффекта, так как размеры таблицы - может целиком записать в память... Плюс возможно специально настраивали так в пакете, чтобы успешно проходил такой тест...
 
-добавил данные около 1 млн строк `insert into pgbench_accounts select 100000+row_number() over(partition by null order by null) as rn, 1 as y, null::integer as z, c1 from testnm.t1 ;`
-```
-scaling factor: 1
-query mode: simple
-number of clients: 20
-number of threads: 1
-maximum number of tries: 1
-duration: 60 s
-number of transactions actually processed: 17810
-number of failed transactions: 0 (0.000%)
-latency average = 67.413 ms
-latency stddev = 53.542 ms
-initial connection time = 70.814 ms
-tps = 295.865734 (without initial connection time)
-```
-ребутаю кластер, комментирую строки из прикрепленного файла
-tps = 280 - даже выше..., меняю на изначальный ребутаю 298 ... т.е. в пределах погрешности
- Получается - плюс минус тоже самое.
-
 
 ### сделаю несколько миллионов строк (10100000) ###
 ```console
@@ -224,6 +205,7 @@ latency stddev = 69.699 ms
 initial connection time = 69.789 ms
 tps = 224.861940 (without initial connection time)
 ```
+
  а теперь новый:
 ```console
 scaling factor: 1
