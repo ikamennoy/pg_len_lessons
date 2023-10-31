@@ -198,6 +198,50 @@ tps = 280 - даже выше..., меняю на изначальный реб�
  Получается - плюс минус тоже самое.
 
 
+### сделаю несколько миллионов строк (10100000) ###
+```console
+testdb=# \dt+
+                                         List of relations
+ Schema |       Name       | Type  |  Owner   | Persistence | Access method |  Size   | Description
+--------+------------------+-------+----------+-------------+---------------+---------+-------------
+ public | pgbench_accounts | table | postgres | permanent   | heap          | 1215 MB |
+ public | pgbench_branches | table | postgres | permanent   | heap          | 72 kB   |
+ public | pgbench_history  | table | postgres | permanent   | heap          | 1000 kB |
+ public | pgbench_tellers  | table | postgres | permanent   | heap          | 112 kB  |
+
+time pgbench -c20 -P 6 -T 120 -U postgres testdb
+# - оригинальный конфиг
+scaling factor: 1
+query mode: simple
+number of clients: 20
+number of threads: 1
+maximum number of tries: 1
+duration: 120 s
+number of transactions actually processed: 27015
+number of failed transactions: 0 (0.000%)
+latency average = 88.787 ms
+latency stddev = 69.699 ms
+initial connection time = 69.789 ms
+tps = 224.861940 (without initial connection time)
+```
+ а теперь новый:
+```console
+scaling factor: 1
+query mode: simple
+number of clients: 20
+number of threads: 1
+maximum number of tries: 1
+duration: 120 s
+number of transactions actually processed: 36883
+number of failed transactions: 0 (0.000%)
+latency average = 64.999 ms
+latency stddev = 55.830 ms
+initial connection time = 71.108 ms
+tps = 307.301493 (without initial connection time)
+```  
+ну ... почти на 100 больше.
+
+
  - [x] Создать таблицу с текстовым полем и заполнить случайными или сгенерированными данным в размере 1млн строк
  создал, см выше - даже 2 шт
  - [x] Посмотреть размер файла с таблицей
@@ -245,7 +289,6 @@ begin; update testnm.t1 set c1=c1||'1' where true;update testnm.t1 set c1=c1||'2
 ```console
 BEGIN
 UPDATE 1000000
-
 UPDATE 1000000
 UPDATE 1000000
 UPDATE 1000000
