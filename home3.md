@@ -12,9 +12,8 @@ docker network create testnet
 ```
 
 > * развернуть контейнер с PostgreSQL 15 смонтировав в него /var/lib/postgresql
-```sh
-
-cat > compose.yaml <<EOF
+## compose.yaml ##
+```yaml
 version: "3.8"
 
 networks:
@@ -32,8 +31,10 @@ services:
     - "5433:5432"
   volumes:
     - /var/lib/postgresql/ddata:/var/lib/postgresql/data
-EOF
+```
 
+
+```sh
 docker-compose up -d> /dev/null
 cat /var/lib/postgresql/ddata/PG_VERSION
 docker exec -it `docker ps -q -f name=pgdb`  pg_createcluster 15 main
