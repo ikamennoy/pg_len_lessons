@@ -209,10 +209,9 @@ sudo -u postgres psql testdb -c "begin ; update testt set y=y||'0' where x=$var+
 ```sh
 sudo -u postgres psql testdb -c "update test1 set y=(16396)::varchar||pg_sleep(2)||(select sum(x) from test1);" & sudo -u postgres psql testdb -c "update test1 set y=(16396)::varchar||pg_sleep(1)||(select sum(x) from tes10);" &
 # не вышло никак
+```
 
-sudo -u postgres psql testdb -c "create table tes10 as select x,'' y from generate_series(1,10)x;"
-sudo -u postgres psql testdb -c "update tes10 set y=pg_advisory_lock(16396)::varchar||pg_sleep(2)||(select sum(x) from test1);" & sudo -u postgres psql testdb -c "update tes10 set y=pg_advisory_lock(16396)::varchar||pg_sleep(1)||(select sum(x) from tes10);" &
-
+```console
 sudo -u postgres psql testdb -c "update test1 set x=x+1,y=(16396)::varchar||pg_sleep(1)||x;" & sudo -u postgres psql testdb -c "update test1 set x=x-1,y=(16396)::varchar||pg_sleep(1)||x;" & sudo -u postgres psql testdb -c "select pg_sleep(1), l.* from pg_locks l where pid!=pg_backend_pid() order by pid " | cat &  sleep 1s ; echo -e '\n\n\n'
 
 # и так не вышло
@@ -226,8 +225,13 @@ UPDATE 1
           | virtualxid |          |          |      |       | 4/410      |               |         |       |          | 4/410              | 10511 | ExclusiveLock    | t       | t        |
 
 ```
-Одна транзакция ждала другую...
 
+```sh
+sudo -u postgres psql testdb -c "create table tes10 as select x,'' y from generate_series(1,10)x;"
+sudo -u postgres psql testdb -c "update tes10 set y=pg_advisory_lock(16396)::varchar||pg_sleep(2)||(select sum(x) from test1);" & sudo -u postgres psql testdb -c "update tes10 set y=pg_advisory_lock(16396)::varchar||pg_sleep(1)||(select sum(x) from tes10);" &
+
+```
+Одна транзакция ждала другую...
 ```console
 2023-11-09 05:06:28.399 MSK [10145] postgres@testdb СООБЩЕНИЕ:  процесс 10145 продолжает ожидать в режиме ExclusiveLock блокировку "рекомендательная блокировка [16384,0,16396,1]" в течение 200.212 мс
 2023-11-09 05:06:28.399 MSK [10145] postgres@testdb ПОДРОБНОСТИ:  Process holding the lock: 10144. Wait queue: 10145.
