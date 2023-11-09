@@ -215,7 +215,16 @@ sudo -u postgres psql testdb -c "update tes10 set y=pg_advisory_lock(16396)::var
 
 sudo -u postgres psql testdb -c "update test1 set x=x+1,y=(16396)::varchar||pg_sleep(1)||x;" & sudo -u postgres psql testdb -c "update test1 set x=x-1,y=(16396)::varchar||pg_sleep(1)||x;" & sudo -u postgres psql testdb -c "select pg_sleep(1), l.* from pg_locks l where pid!=pg_backend_pid() order by pid " | cat &  sleep 1s ; echo -e '\n\n\n'
 
-# не вышло
+# и так не вышло
+UPDATE 1
+UPDATE 1
+ pg_sleep |  locktype  | database | relation | page | tuple | virtualxid | transactionid | classid | objid | objsubid | virtualtransaction |  pid  |       mode       | granted | fastpath | waitstart
+----------+------------+----------+----------+------+-------+------------+---------------+---------+-------+----------+--------------------+-------+------------------+---------+----------+-----------
+          | relation   |    16384 |    16400 |      |       |            |               |         |       |          | 3/1130             | 10510 | RowExclusiveLock | t       | t        |
+          | virtualxid |          |          |      |       | 3/1130     |               |         |       |          | 3/1130             | 10510 | ExclusiveLock    | t       | t        |
+          | relation   |    16384 |    16400 |      |       |            |               |         |       |          | 4/410              | 10511 | RowExclusiveLock | t       | t        |
+          | virtualxid |          |          |      |       | 4/410      |               |         |       |          | 4/410              | 10511 | ExclusiveLock    | t       | t        |
+
 ```
 Одна транзакция ждала другую...
 
