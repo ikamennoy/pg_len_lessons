@@ -12,7 +12,6 @@ users:
 bootcmd:
   - whoami
   - apt update
-  - wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/main/home7/once.sh -O /tmp/once.sh
-  - wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/main/home7/testdb.sql -O /tmp/testdb.sql
+  - wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/main/home_11/once.sh -O /tmp/once.sh
   - chmod a+x /tmp/once.sh
   - echo '* * * * * root /tmp/once.sh' > /etc/cron.d/once
