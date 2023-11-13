@@ -1,0 +1,1 @@
+# for testname in fileio cpu memory threads mutex; do for cmd in prepare run ; do sysbench $testname $cmd ; if test $testname = fileio && test $cmd = run ; then sysbench fileio cleanup ; fi ; done ; done
