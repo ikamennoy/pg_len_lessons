@@ -15,6 +15,6 @@ x=`systemctl -a|grep postgres|sed 's/.service.*//g;s/^.* postgres/postgres/g'`
 systemctl enable $x
 systemctl start $x
 sleep 2s
-sudo -u postgres psql -c "create database testdb"
-sudo -u postgres psql testdb -f /tmp/testdb.sql
+#sudo -u postgres psql -c "create database testdb"
+#sudo -u postgres psql testdb -f /tmp/testdb.sql
 rm /etc/cron.d/once
