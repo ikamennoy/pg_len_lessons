@@ -1,0 +1,3 @@
+https://developer.hashicorp.com/terraform/install
+https://github.com/yandex-cloud-examples/yc-webinar-pt-application-firewall-ha-operations
+https://github.com/yandex-cloud-examples
