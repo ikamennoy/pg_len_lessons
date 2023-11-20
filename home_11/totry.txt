@@ -6,3 +6,5 @@ https://gist.github.com/mac2000/57c6cfd2b9d9505f2187b3ce8fed032f
 https://github.com/yandex-cloud/usecases/tree/master
 https://jqlang.github.io/jq/manual/#basic-filters
 https://ipinfo.io/json
+
+https://www.pgpool.net/mediawiki/index.php/Main_Page
