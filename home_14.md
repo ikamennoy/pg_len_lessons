@@ -223,4 +223,6 @@ for addr in $hosts; do psql -h $addr -U postgres -w -c "select inet_server_addr(
  slot_name | plugin | slot_type | database | active | active_pid | restart_lsn | confirmed_flush_lsn | wal_status
 -----------+--------+-----------+----------+--------+------------+-------------+---------------------+------------
 (0 rows)
+
+for i in 1 2 3 4;do yc compute instance delete p$i ; done ; yc vpc subnet list|grep central|cut -d "|" -f 2 |xargs -n 1 yc vpc subnet delete; yc vpc network delete testnetb
 ```
