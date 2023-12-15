@@ -279,82 +279,34 @@ explain (analyze,buffers, timing) select fare_conditions, count(*) from ticket_f
 
 - [x] Реализовать индекс для полнотекстового поиска
 Обычно используют GIN или GIST.  GIN выигрывает в точности и скорости поиска у GiST. Если данные изменяются не часто, а искать надо быстро — скорее всего выбор падет на GIN.
-```sql
+```console
 drop index ticket_flights_fare_condition;
-create extension  btree_gin;
-create index ticket_flights_fare_condition on ticket_flights USING gin (fare_conditions)
-comment on index ticket_flights_fare_condition is 'btree gin';
-```
-|sm|tab|indexname|indexdef|zi|zt|z_total|
-|--|---|---------|--------|--|--|-------|
-|bookings|ticket_flights|ticket_flights_pkey|CREATE UNIQUE INDEX ticket_flights_pkey ON bookings.ticket_flights USING btree (ticket_no, flight_id)|570 MB|968 MB|1547 MB|
-|bookings|ticket_flights|ticket_flights_fare_condition|CREATE INDEX ticket_flights_fare_condition ON bookings.ticket_flights USING gin (fare_conditions)|8840 kB|968 MB|1547 MB|
-
--- видно что в разы меньше размер
-
-```console
-demo=# explain (analyze,buffers, timing) select fare_conditions, count(*) from ticket_flights where fare_conditions like 'Comfort'::tsvector group by fare_conditions;
-                                                                               QUERY PLAN
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Finalize GroupAggregate  (cost=10000110048.80..10000110409.14 rows=3 width=16) (actual time=673.837..685.304 rows=1 loops=1)
+demo=# create index ticket_flights_fare_condition_gin on ticket_flights USING gin (cast(fare_conditions as tsvector));
+CREATE INDEX
+demo=# explain (analyze,buffers, timing)  select fare_conditions, count(*) from ticket_flights where 'Bus' @@ fare_conditions::tsvector group by fare_conditions;
+                                                                      QUERY PLAN
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ HashAggregate  (cost=66069.32..66069.35 rows=3 width=16) (actual time=0.012..0.013 rows=0 loops=1)
    Group Key: fare_conditions
-   Buffers: shared hit=1804 read=68205, temp read=135 written=136
-   ->  Gather Merge  (cost=10000110048.80..10000110409.08 rows=6 width=16) (actual time=673.787..685.253 rows=3 loops=1)
-         Workers Planned: 2
-         Workers Launched: 2
-         Buffers: shared hit=1804 read=68205, temp read=135 written=136
-         ->  Partial GroupAggregate  (cost=10000109048.78..10000109408.36 rows=3 width=16) (actual time=618.170..618.173 rows=1 loops=3)
-               Group Key: fare_conditions
-               Buffers: shared hit=1804 read=68205, temp read=135 written=136
-               ->  Sort  (cost=10000109048.78..10000109168.63 rows=47940 width=8) (actual time=606.875..613.724 rows=46655 loops=3)
-                     Sort Key: fare_conditions
-                     Sort Method: quicksort  Memory: 3166kB
-                     Buffers: shared hit=1804 read=68205, temp read=135 written=136
-                     Worker 0:  Sort Method: external merge  Disk: 1080kB
-                     Worker 1:  Sort Method: quicksort  Memory: 3286kB
-                     ->  Parallel Seq Scan on ticket_flights  (cost=10000000000.00..10000105321.70 rows=47940 width=8) (actual time=398.422..590.350 rows=46655 loops=3)
-                           Filter: ((fare_conditions)::text ~~ 'Comfor%'::text)
-                           Rows Removed by Filter: 2750629
-                           Buffers: shared hit=1728 read=68205
- Planning Time: 0.117 ms
- JIT:
-   Functions: 27
-   Options: Inlining true, Optimization true, Expressions true, Deforming true
-   Timing: Generation 2.362 ms, Inlining 251.743 ms, Optimization 115.925 ms, Emission 143.073 ms, Total 513.104 ms
- Execution Time: 686.255 ms
-(26 строк)
-
-demo=# explain (analyze,buffers, timing) select fare_conditions, count(*) from ticket_flights where fare_conditions = 'Comfort' group by fare_conditions;
-                                                                        QUERY PLAN
------------------------------------------------------------------------------------------------------------------------------------------------------------
- GroupAggregate  (cost=2367.68..76959.47 rows=3 width=16) (actual time=43.506..43.509 rows=1 loops=1)
-   Group Key: fare_conditions
-   Buffers: shared hit=1189
-   ->  Bitmap Heap Scan on ticket_flights  (cost=2367.68..76384.16 rows=115056 width=8) (actual time=10.688..27.417 rows=139965 loops=1)
-         Recheck Cond: ((fare_conditions)::text = 'Comfort'::text)
-         Heap Blocks: exact=1167
-         Buffers: shared hit=1189
-         ->  Bitmap Index Scan on ticket_flights_fare_condition  (cost=0.00..2338.92 rows=115056 width=0) (actual time=10.523..10.524 rows=139965 loops=1)
-               Index Cond: ((fare_conditions)::text = 'Comfort'::text)
-               Buffers: shared hit=22
+   Batches: 1  Memory Usage: 24kB
+   Buffers: shared hit=2
+   ->  Bitmap Heap Scan on ticket_flights  (cost=1801.18..65859.52 rows=41959 width=8) (actual time=0.010..0.010 rows=0 loops=1)
+         Recheck Cond: ('''Bus'''::tsquery @@ (fare_conditions)::tsvector)
+         Buffers: shared hit=2
+         ->  Bitmap Index Scan on ticket_flights_fare_condition_gin  (cost=0.00..1790.69 rows=41959 width=0) (actual time=0.008..0.008 rows=0 loops=1)
+               Index Cond: ((fare_conditions)::tsvector @@ '''Bus'''::tsquery)
+               Buffers: shared hit=2
  Planning:
-   Buffers: shared hit=1
- Planning Time: 0.122 ms
- Execution Time: 43.561 ms
-(14 строк)
-```
-Впрочем не настолько удобный и быстрый, как btree
-
-Попробуем так:
-```console
-create table ticket_flights_vector as select ticket_no,flight_id, to_tsvector('english',fare_conditions) as fare_cond from ticket_flights;
-create index ticket_flights_fare_condition_v on ticket_flights_vector using gin( fare_cond ) ;
-CREATE UNIQUE INDEX ticket_flights_v_pkey2 ON ticket_flights_vector USING btree (ticket_no, flight_id);
-explain (analyze,buffers, timing) select fare_conditions, count(*) from ticket_flights t natural join ticket_flights_vector v where fare_cond = 'Comfort'::tsvector group by fare_conditions; -- как то не очень
-drop table ticket_flights_vector;
+   Buffers: shared hit=26 read=3
+ Planning Time: 0.363 ms
+ Execution Time: 0.076 ms
+(14 строк)comment on index ticket_flights_fare_condition is 'btree gin';
 ```
 
-попробуем более оптимальный.
+-- видно что в разы меньше размер ( 8840 kB )
+
+
+попробуем еще это:
 ```sql
 create extension pg_trgm;
 drop index ticket_flights_fare_condition;
@@ -365,6 +317,7 @@ comment on index ticket_flights_fare_condition is 'test GiST_trgm_ops'
 |--|---|---------|--------|--|--|-------|
 |bookings|ticket_flights|ticket_flights_pkey|CREATE UNIQUE INDEX ticket_flights_pkey ON bookings.ticket_flights USING btree (ticket_no, flight_id)|570 MB|547 MB|1905 MB|
 |bookings|ticket_flights|ticket_flights_fare_condition|CREATE INDEX ticket_flights_fare_condition ON bookings.ticket_flights USING gist (fare_conditions gist_trgm_ops)|788 MB|547 MB|1905 MB|
+
 
 великолепно:
 ```console
@@ -486,6 +439,8 @@ demo=# explain (analyze,buffers, timing) select fare_conditions, count(*) from t
  Execution Time: 155.558 ms
 (34 строки)
 ```
+-- но размер индекса на базе триграмм больше, хотя и функциональность выше
+
 
 - [x] Реализовать индекс на часть таблицы или индекс на поле с функцией
 ```sql
