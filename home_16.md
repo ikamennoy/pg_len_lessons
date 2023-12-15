@@ -5,7 +5,7 @@
 
 - [x] Создать индекс к какой-либо из таблиц вашей БД
 ```sh
-# создаем сеть, подсеть и машину. получаем адреса. настраиваем. ставим демо базу https://edu.postgrespro.ru/education/demodb
+# создаем сеть, подсеть и машину. получаем адреса. настраиваем. ставим демо базу https://habr.com/ru/companies/postgrespro/articles/316428/
 yc vpc network create --name testnetb; yc vpc subnet create --network-name testnetb --name subnetb --zone 'ru-central1-b' --range '10.0.130.0/24'
 nam=p1; yc compute instance create --name $nam --metadata-from-file user-data=meta.yaml --create-boot-disk name=root-disk2-$nam,type=network-ssd,size=20G,auto-delete,image-folder-id=standard-images,image-family=ubuntu-2204-lts --memory 4G --cores 2 --hostname u$nam --metadata serial-port-enable=1 --zone ru-central1-b --core-fraction 50 --preemptible --platform standard-v2; yc compute instance add-one-to-one-nat $nam --network-interface-index 0
 mip=`curl -s https://ipinfo.io/json|jq .ip|sed 's/"//g'`
