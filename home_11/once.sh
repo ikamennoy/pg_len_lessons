@@ -1,7 +1,6 @@
 #!/bin/bash
 dpkg -l|grep postgres && exit 0
 grep -e '^ru_RU.UTF-8' /etc/locale.gen && exit 0
-apt update
 timedatectl set-timezone Europe/Moscow
 sed -i "/ru_RU.UTF-8/s/^# //g" /etc/locale.gen
 locale-gen
