@@ -74,22 +74,53 @@ and amount<=8000
 
 - [x] Придумайте 3 своих метрики на основе показанных представлений, отправьте их через ЛК, а так же поделитесь с коллегами в слаке
 ```
-select b.book_ref
-,b.total_amount
-,sum(tf.amount) as check_sum
-,count(case when tf.fare_conditions=s.fare_conditions then null else 1 end) as fail_conditions
-,round(100.0*count(p.ticket_no)/count(tf.ticket_no),2) as Person_at_board
-from bookings.bookings b
- join bookings.tickets t on b.book_ref =t.book_ref 
- join bookings.ticket_flights tf on tf.ticket_no = t.ticket_no 
-left join bookings.boarding_passes p on p.ticket_no =t.ticket_no --and p.flight_id =tf.flight_id  
-left join bookings.flights f on f.flight_id=tf.flight_id
-left join bookings.seats s on s.seat_no = p.seat_no and f.aircraft_code=s.aircraft_code
-left join bookings.aircrafts c on c.aircraft_code=f.aircraft_code
-left join bookings.airports d on f.departure_airport = d.airport_code 
-left join bookings.airports a on f.arrival_airport = a.airport_code 
-group by b.book_ref
+--    
+select 
+f.flight_id, --рейс
+--string_agg(distinct f.status,',') as status ,
+sum(z.amount) as amount, --стоимость проданных билетов рейса
+count(f.flight_id) as bye  -- купили
+,count(case when (select count(*) from bookings.boarding_passes p where p.flight_id=f.flight_id and p.ticket_no=z.ticket_no)>0 then 1 end) as board -- сели
+,avg(f.actual_arrival-f.scheduled_arrival) as latency  -- задержка
+from bookings.flights f 
+ join bookings.aircrafts c on c.aircraft_code=f.aircraft_code
+ join bookings.airports d on f.departure_airport = d.airport_code 
+ join bookings.airports a on f.arrival_airport = a.airport_code 
+ join  bookings.ticket_flights z on z.flight_id  = f.flight_id
+ where scheduled_arrival between '2016-10-13 01:00:00.000 +0300' and '2016-10-13 17:00:00.000 +0300'
+and a.city='Санкт-Петербург' and f.flight_id>=188074
+group by f.flight_id
+order by f.flight_id desc fetch first 10 rows only
 ```
-- Проверка итоговой суммы и суммы по билетам (  total_amount = sum(tf.amount) )
-- Проверка соответствия условий места в билете и самолете
-- % севших в самолет
+```
+|QUERY PLAN|
+|----------|
+|Limit  (cost=0.98..18266.86 rows=10 width=100)|
+|  ->  GroupAggregate  (cost=0.98..71237.90 rows=39 width=100)|
+|        Group Key: f.flight_id|
+|        ->  Nested Loop  (cost=0.98..71057.43 rows=39 width=48)|
+|              ->  Nested Loop  (cost=0.42..1231.65 rows=1 width=28)|
+|                    Join Filter: (f.departure_airport = d.airport_code)|
+|                    ->  Nested Loop  (cost=0.42..1227.31 rows=1 width=32)|
+|                          Join Filter: (f.aircraft_code = c.aircraft_code)|
+|                          ->  Nested Loop  (cost=0.42..1226.11 rows=1 width=36)|
+|                                Join Filter: (f.arrival_airport = a.airport_code)|
+|                                ->  Index Scan Backward using flights_pkey on flights f  (cost=0.42..1222.13 rows=45 width=40)|
+|                                      Index Cond: (flight_id >= 188074)|
+|                                      Filter: ((scheduled_arrival >= '2016-10-13 01:00:00+03'::timestamp with time zone) AND (scheduled_arrival <= '2016-10-13 17:00:00+03'::timestamp with time zone))|
+|                                ->  Materialize  (cost=0.00..3.30 rows=1 width=4)|
+|                                      ->  Seq Scan on airports a  (cost=0.00..3.30 rows=1 width=4)|
+|                                            Filter: (city = 'Санкт-Петербург'::text)|
+|                          ->  Seq Scan on aircrafts c  (cost=0.00..1.09 rows=9 width=16)|
+|                    ->  Seq Scan on airports d  (cost=0.00..3.04 rows=104 width=4)|
+|              ->  Index Scan using ticket_flights_pkey on ticket_flights z  (cost=0.56..69824.74 rows=103 width=24)|
+|                    Index Cond: (flight_id = f.flight_id)|
+|        SubPlan 1|
+|          ->  Aggregate  (cost=4.58..4.59 rows=1 width=8)|
+|                ->  Index Only Scan using boarding_passes_pkey on boarding_passes p  (cost=0.56..4.58 rows=1 width=0)|
+|                      Index Cond: ((ticket_no = z.ticket_no) AND (flight_id = f.flight_id))|
+```
+- Задержка прибытия
+- сколько село
+- сколько билетов
+- стоимость проданных билетов рейса
