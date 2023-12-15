@@ -281,8 +281,9 @@ explain (analyze,buffers, timing) select fare_conditions, count(*) from ticket_f
 Обычно используют GIN или GIST.  GIN выигрывает в точности и скорости поиска у GiST. Если данные изменяются не часто, а искать надо быстро — скорее всего выбор падет на GIN.
 ```console
 drop index ticket_flights_fare_condition;
-demo=# create index ticket_flights_fare_condition_gin on ticket_flights USING gin (cast(fare_conditions as tsvector));
-CREATE INDEX
+create index ticket_flights_fare_condition_gin on ticket_flights USING gin (cast(fare_conditions as tsvector));
+-- https://habr.com/ru/companies/postgrespro/articles/340978/
+
 demo=# explain (analyze,buffers, timing)  select fare_conditions, count(*) from ticket_flights where 'Bus' @@ fare_conditions::tsvector group by fare_conditions;
                                                                       QUERY PLAN
 -------------------------------------------------------------------------------------------------------------------------------------------------------
