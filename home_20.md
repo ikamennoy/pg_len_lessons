@@ -137,19 +137,26 @@ CONSTRAINT boarding_passes_ticket_no_fkey FOREIGN KEY (ticket_no,flight_id) REFE
 ```
 
 ```sql
-alter table boarding_passes add CONSTRAINT boarding2_passes_flight_id_boarding_no_key UNIQUE (flight_id, boarding_no);
-alter table  boarding_passes add CONSTRAINT boarding2_passes_flight_id_seat_no_key UNIQUE (flight_id, seat_no,boarding_no);
-alter table  boarding_passes add CONSTRAINT boarding2_passes_pkey PRIMARY KEY (ticket_no, flight_id,boarding_no);
-alter table  boarding_passes add CONSTRAINT boarding2_passes_ticket_no_fkey FOREIGN KEY (ticket_no,flight_id) REFERENCES bookings.ticket_flights(ticket_no,flight_id) ;
-
 CREATE TABLE boarding_passes_100 PARTITION OF boarding_passes FOR VALUES from (1) to (100); -- так как среднее 59 - стоило делить скорее первый отрезок на 3 части похоже... но задачи делить равномерно нет...
 CREATE TABLE boarding_passes_200 PARTITION OF boarding_passes FOR VALUES from (100) to (200);
 CREATE TABLE boarding_passes_300 PARTITION OF boarding_passes FOR VALUES from (200) to (300);
 CREATE TABLE boarding_passes_400 PARTITION OF boarding_passes default;
 
-with q as (delete from boarding_passes0 where boarding_no>100 returning * ) insert into boarding_passes select * from q ; -- делаем партиями
-with q as (delete from boarding_passes0 where boarding_no>50 returning * ) insert into boarding_passes select * from q ;
-insert into boarding_passes select * from boarding_passes0;
+
+with q as (delete from boarding_passes0 where boarding_no<10 and boarding_no>=0  returning * ) insert into boarding_passes select * from q ;
+with q as (delete from boarding_passes0 where boarding_no<20 and boarding_no>=10  returning * ) insert into boarding_passes select * from q ;
+with q as (delete from boarding_passes0 where boarding_no<30 and boarding_no>=20  returning * ) insert into boarding_passes select * from q ;
+with q as (delete from boarding_passes0 where boarding_no<50 and boarding_no>=30  returning * ) insert into boarding_passes select * from q ;
+with q as (delete from boarding_passes0 where boarding_no<70 and boarding_no>=50  returning * ) insert into boarding_passes select * from q ;
+with q as (delete from boarding_passes0 where boarding_no<100 and boarding_no>=70  returning * ) insert into boarding_passes select * from q ;
+with q as (delete from boarding_passes0 where boarding_no<500 and boarding_no>=100  returning * ) insert into boarding_passes select * from q ;
+--insert into boarding_passes select * from boarding_passes0;
+
+alter table boarding_passes add CONSTRAINT boarding2_passes_flight_id_boarding_no_key UNIQUE (flight_id, boarding_no);
+alter table  boarding_passes add CONSTRAINT boarding2_passes_flight_id_seat_no_key UNIQUE (flight_id, seat_no,boarding_no);
+alter table  boarding_passes add CONSTRAINT boarding2_passes_pkey PRIMARY KEY (ticket_no, flight_id,boarding_no);
+alter table  boarding_passes add CONSTRAINT boarding2_passes_ticket_no_fkey FOREIGN KEY (ticket_no,flight_id) REFERENCES bookings.ticket_flights(ticket_no,flight_id) ;
+
 
 update pg_constraint set confrelid=17254 where confrelid=16403; -- перевесим на другую таблицу
 
