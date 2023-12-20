@@ -117,7 +117,8 @@ select min(boarding_no),avg(boarding_no)::int4,max(boarding_no) from boarding_pa
 alter table boarding_passes rename to boarding_passes0;
 create index boarding_passes_x1 on boarding_passes0 using btree(boarding_no);
 create table boarding_passes ( like boarding_passes0  ) partition by RANGE(boarding_no);
-select relid,schemaname,relname from pg_catalog.pg_stat_user_tables where relname in ('boarding_passes0','boarding_passes') -- пригодится когда дропнем boarding_passes0
+--select relid,schemaname,relname from pg_catalog.pg_stat_user_tables where relname in ('boarding_passes0','boarding_passes') -- пригодится когда дропнем boarding_passes0 и есть constraints
+--update pg_constraint set confrelid=17254 where confrelid=16403; -- нет constraint
 ```
 |relid|schemaname|relname|
 |-----|----------|-------|
@@ -158,7 +159,7 @@ alter table  boarding_passes add CONSTRAINT boarding2_passes_pkey PRIMARY KEY (t
 alter table  boarding_passes add CONSTRAINT boarding2_passes_ticket_no_fkey FOREIGN KEY (ticket_no,flight_id) REFERENCES bookings.ticket_flights(ticket_no,flight_id) ;
 
 
-update pg_constraint set confrelid=17254 where confrelid=16403; -- перевесим на другую таблицу
+
 
 drop table boarding_passes0 ;
 
