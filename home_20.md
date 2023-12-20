@@ -147,8 +147,8 @@ CREATE TABLE boarding_passes_200 PARTITION OF boarding_passes FOR VALUES from (1
 CREATE TABLE boarding_passes_300 PARTITION OF boarding_passes FOR VALUES from (200) to (300);
 CREATE TABLE boarding_passes_400 PARTITION OF boarding_passes default;
 
-with q as (delete from boarding_passes0 where boarding_no>100 returning * ) insert into select * from q ; -- делаем партиями
-with q as (delete from boarding_passes0 where boarding_no>50 returning * ) insert into select * from q ;
+with q as (delete from boarding_passes0 where boarding_no>100 returning * ) insert into boarding_passes select * from q ; -- делаем партиями
+with q as (delete from boarding_passes0 where boarding_no>50 returning * ) insert into boarding_passes select * from q ;
 insert into boarding_passes select * from boarding_passes0;
 
 update pg_constraint set confrelid=17254 where confrelid=16403; -- перевесим на другую таблицу
