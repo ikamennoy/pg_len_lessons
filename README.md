@@ -37,11 +37,11 @@ vb(haproxy,patroni+consul,postgresql) <-> va(haproxy,patroni+consul,postgresql) 
 Выводы и планы по развитию
 ```
 1.Можно внедрить watchdog,
-2. более глубо разобрать consul, postgres, patroni
+2. более глубо разобрать consul, postgres, patroni, https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md or consul-template
 3 .Попробовать pypgsql
 4.Добавить мониторинг
-5. попробовать тоже самое на K8s
-6. внедрить pgbouncer - несколько потоков
+5. попробовать тоже самое на K8s ... https://github.com/citusdata/citus
+6. внедрить pgbouncer - несколько потоков 
 7. метрики или проверки в consul
 ```
 
