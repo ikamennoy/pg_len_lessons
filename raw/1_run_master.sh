@@ -196,6 +196,8 @@ vrrp_instance HOSTNAME {
 EOK
 sed "s/IPADDR/$localip/g;s/HOSTNAME/`hostname`/g;s/BACKUP/MASTER/" /home/uuu/keepalived.conf.0 > /etc/keepalived/keepalived.conf
 echo -e 'TYPE=Ethernet\nDEVICE=eth0:1' > /etc/sysconfig/network-scripts/ifcfg-eth0:1
+echo -e 'Requires=consul.service\nRequires=patroni.service' >> /usr/lib/systemd/system/keepalived.service
+systemctl daemon-reload
 systemctl enable keepalived --now
 
 cp /etc/consul.d/consul.json /home/uuu

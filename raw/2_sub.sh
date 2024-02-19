@@ -46,9 +46,12 @@ disablereps="--disablerepo=pgdg15 --disablerepo=pgdg14 --disablerepo=pgdg12"
 #yum install -C -y postgresql13-server postgres13-agent haproxy epel-release python-psycopg2 chrony wget zip unzip jq vim curl lsof git keepalived patroni-consul $disablereps || yum install -y postgresql13-server postgres13-agent haproxy epel-release python-psycopg2 chrony wget zip unzip jq vim curl lsof git keepalived patroni-consul $disablereps
 test -f /usr/bin/zip || exit 1
 sed "s/IPADDR/$localip/g;s/HOSTNAME/`hostname`/g" /home/uuu/keepalived.conf.0 > /etc/keepalived/keepalived.conf
+echo -e 'Requires=consul.service\nRequires=patroni.service' >> /usr/lib/systemd/system/keepalived.service
+systemctl daemon-reload
 cp {/home/uuu/,/etc/patroni/}patroni.yml
 chown postgres.postgres /etc/patroni/patroni.yml
 sed "s/IPADDR/$localip/g;s/HOSTNAME/`hostname`/g" /home/uuu/patroni.yml > /etc/patroni/patroni.yml
 cp /home/uuu/haproxy.cfg /etc/haproxy/
 cat /etc/keepalived/keepalived.conf /etc/patroni/patroni.yml /etc/consul.d/consul.json /etc/haproxy/haproxy.cfg /etc/environment
+
 
