@@ -83,9 +83,10 @@ firewall-cmd --zone=work --add-source=10.0.130.0/24 --permanent
 firewall-cmd --zone=work --add-port={5432,55432,6432,8300,8301,8302,8500,8600,80,443,55558,3128,8008,55700,5000,5001}/tcp --permanent
 firewall-cmd --zone=work --add-port=1194/udp --permanent
 firewall-cmd --reload
+setenforce 0
+sed -i 's/=enforcing/=permissive/g' /etc/selinux/config
 
-
-yum install -y postgresql13-server postgres13-agent python-psycopg2 $disablereps --downloaddir=/home/uuu/
+yum install -y postgresql13-server postgres13-agent python-psycopg2 watchdog $disablereps --downloaddir=/home/uuu/
 test -f /var/lib/pgsql/13/data/pg_hba.conf || /usr/pgsql-13/bin/postgresql-13-setup initdb
 
 sudo -i -u postgres <<EOG
@@ -216,14 +217,32 @@ sed -i "s/IPADDR/$localip/g;s/HOSTNAME/`hostname`/g" /etc/patroni/patroni.yml
 
 #sudo yum -y install go $disablereps ; git clone https://github.com/hashicorp/consul-template.git; cd consul-template ; make dev 
 ## https://github.com/hashicorp/consul-template/blob/main/examples/haproxy.md
-systemctl disable postgres-13
-(cd /tmp
+systemctl disable postgresql-13
+cat <<EOW >> /etc/watchdog.conf 
+ping                    = 10.0.130.1
+interface               = eth0
+file                    = /var/log/messages
+change                  = 1407
+max-load-1              = 44
+max-load-5              = 18
+max-load-15             = 12
+min-memory              = 1
+test-binary             = /usr/pgsql-13/bin/pg_isready
+test-timeout            = 20
+realtime                = yes
+priority                = 1
+pidfile = /var/lib/pgsql/13/data/postmaster.pid
+EOW
+
+(
+cd /tmp
 sudo -u postgres psql -c "SELECT pg_postmaster_start_time();"
 test "`consul members|grep server |wc -l`" -ge 2 || exit 1 
 systemctl enable --now patroni
 patronictl -c /etc/patroni/patroni.yml list 
 sudo -u postgres psql -c "SELECT pg_postmaster_start_time();"
 )
-systemctl status patroni && ssh va sudo systemctl enable patroni haproxy keepalived --now
-systemctl status patroni && ssh vd sudo systemctl enable patroni haproxy keepalived --now
+sleep 1s
+systemctl status patroni && ssh $SSHOPS uuu@va sudo systemctl enable patroni haproxy keepalived --now
+systemctl status patroni && ssh $SSHOPS uuu@vd sudo systemctl enable patroni haproxy keepalived --now
 

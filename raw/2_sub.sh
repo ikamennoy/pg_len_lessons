@@ -16,6 +16,8 @@ EOI
 EON
 
 cd /home/uuu
+setenforce 0
+sed -i 's/=enforcing/=permissive/g' /etc/selinux/config
 #rm -f squid*
 #grep -e no_proxy /etc/environment || echo -e 'http_proxy=http://vb:55558\nhttps_proxy=http://vb:55558\nno_proxy=127.0.0.1,vb,va,vd,*.internal,localhost,*.testnet.tech' >> /etc/environment
 ls -1 *.rpm | xargs yum -y localinstall
