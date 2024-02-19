@@ -33,7 +33,7 @@ DNS сервисы с SRV записями, компилируется на Go �
 В результате   1 скрипт: развертывание машин, создание инстанса Postgresql – и на базесуществующего – создание кластераPatroni
     1 мастер, 2 реплики - в случае вывода машины - все равнозначны.
 
-vb(haproxy,patroni+consul,postgresql) <-> va(haproxy,patroni+consul,postgresql) vd(haproxy,patroni+consul,postgresql)
+`vb(haproxy,patroni+consul,postgresql) <--> va(haproxy,patroni+consul,postgresql) <--> vd(haproxy,patroni+consul,postgresql) <-->`
 
 Выводы и планы по развитию
 ```
