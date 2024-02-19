@@ -47,6 +47,7 @@ disablereps="--disablerepo=pgdg15 --disablerepo=pgdg14 --disablerepo=pgdg12"
 test -f /usr/bin/zip || exit 1
 sed "s/IPADDR/$localip/g;s/HOSTNAME/`hostname`/g" /home/uuu/keepalived.conf.0 > /etc/keepalived/keepalived.conf
 echo -e 'Requires=consul.service\nRequires=patroni.service' >> /usr/lib/systemd/system/keepalived.service
+echo -e 'Requires=consul.service' >> /usr/lib/systemd/system/patroni.service
 systemctl daemon-reload
 cp {/home/uuu/,/etc/patroni/}patroni.yml
 chown postgres.postgres /etc/patroni/patroni.yml
