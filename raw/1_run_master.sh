@@ -43,6 +43,7 @@ disablereps="--disablerepo=pgdg15 --disablerepo=pgdg14 --disablerepo=pgdg12"
 yum install -y firewalld epel-release chrony wget zip unzip jq vim curl lsof git telnet keepalived haproxy $disablereps --downloaddir=/home/uuu/
 test -f /usr/bin/vim || exit 1
 consul -autocomplete-install
+
 mkdir /etc/squid/
 cat <<EOSQ > /etc/squid/squid.conf
 dns_v4_first on
@@ -73,8 +74,11 @@ refresh_pattern ((sqlite.bz2)*)$      0       20%     2880
 refresh_pattern (\.deb|\.udeb)$   1296000 100% 1296000
 refresh_pattern (\.rpm|\.srpm)$   1296000 100% 1296000
 refresh_pattern .        0    20%    4320
+dns_nameservers 8.8.8.8
 EOSQ
 sed -ie "s/IPADDR/$localip/g" /etc/squid/squid.conf
+# https://docs.openshift.com/container-platform/3.11/install_config/http_proxies.html https://gist.github.com/leighghunt/843184c8447972638e9ae6e33097e553
+
 systemctl enable chronyd firewalld consul --now
 #grep -e no_proxy /etc/environment || echo -e 'http_proxy=http://vb:55558\nhttps_proxy=http://vb:55558\nno_proxy=127.0.0.1,vb,va,vd,*.internal,localhost,*.testnet.tech' >> /etc/environment
 #. /etc/environment
