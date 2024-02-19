@@ -1,0 +1,18 @@
+#cloud-config
+users:
+  - name: uuu
+    groups: sudo
+    plain_text_passwd: 'test123'
+    shell: /bin/bash
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    lock_passwd: false
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD1+72sIJ4TmXAvHCUCbMb+IwsdVh6dG1KR6xhd3q6Bimm3QwbhGtfGvs+Wp//0Z3CBIFepEriRKc2Nj0+c0M6qHAmyL1SeCHVz9+078XBlI1YWQs4vf6N4HBQ5i6euRYCJ1u8TouRlkNBaEc3C/BvXSwZ0O8gQfSd2bBtjQS4p7f8zp8Mgk2Yn4Ly9b5NlpreZTPQ1vYOfGs3Z3UrXGDkhW9a2DkCgA2ldHAwACzYvr3lipMtsPVTf+V9daMrVDB/rPSyW/1d/APFyt/7qgJncUSTMPyNqOzsy5RqIJdZV4LOKpk3NqtlIH35E03QKFOXW0zRBdjLMu/AQ6viudKHH
+
+bootcmd:
+  - whoami
+  #- wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/patroni/raw/once.sh -O /tmp/once.sh
+  #- wget https://raw.githubusercontent.com/ikamennoy/pg_len_lessons/patroni/raw/s1.sql -O /tmp/testdb.sql
+  #- chmod a+x /tmp/once.sh
+  #- echo '* * * * * root /tmp/once.sh' > /etc/cron.d/once
+
