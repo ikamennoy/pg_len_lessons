@@ -106,6 +106,9 @@ https://habr.com/ru/articles/266139/ -- хвалебная ода про consul 
 https://www.zabbix.com/ru/integrations/postgresql
 https://gitlab.com/aerian/zabbix/patroni_http/-/blob/main/template_app_patroni_http.json?ref_type=heads
 
+https://habr.com/ru/articles/658137/ Что нового в плане мониторинга в PostgreSQL (Алексей Лесовский)
+    - https://postgrespro.ru/education/books
+
 https://www.postgresql.org/docs/current/monitoring-stats.html
 
 pg_stat_activity	One row per server process, showing information related to the current activity of that process, such as state and current query. See pg_stat_activity for details.
