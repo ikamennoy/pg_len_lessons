@@ -49,8 +49,18 @@ DNS сервисы с SRV записями, компилируется на Go �
   - https://patroni.readthedocs.io/en/latest/yaml_configuration.html#postgresql-settings
   - https://github.com/zalando/spilo `Spilo: HA PostgreSQL Clusters with Docker`
   - https://patroni.readthedocs.io/en/latest/existing_data.html
+  - https://www.dmosk.ru/miniinstruktions.php?mini=patroni-consul-ubuntu
+  - https://habr.com/ru/articles/674020/ Алгоритм работы HA кластера PostgreSQL с помощью Patroni
+  - https://habr.com/ru/articles/512768/ Patroni Failure Stories or How to crash your PostgreSQL cluster. Алексей Лесовский !!! 
+                - https://habr.com/ru/companies/vk/articles/452846/ Блог компании VK - хороший тест на python
+                - https://habr.com/ru/articles/530506/ Patroni и stolon инсталляция и отработка падений. Максим Милютин
+                - https://pgconf.ru/talk/1588646 Как мы выбирали среди patroni, stolon, repmgr Андрей Фефелов Mastery.pro
+  - https://habr.com/ru/articles/754168/ docker.io/bitnami/postgresql-repmgr , prometheuscommunity/postgres-exporter:v0.11.1
 
   - https://selectel.ru/blog/tutorials/how-to-install-pgbouncer-connection-pooler-for-postgresql/
+
+  - https://interface31.ru/tech_it/2023/02/uluchshaem-proizvoditelnost-linux-pri-pomoshhi-zram.html - попробовать с etcd RAM диск
+  - https://habr.com/ru/articles/482314/ etcd example
     
 
 3 .Попробовать pypgsql
