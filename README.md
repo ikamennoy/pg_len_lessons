@@ -55,6 +55,8 @@ DNS сервисы с SRV записями, компилируется на Go �
                 - https://habr.com/ru/companies/vk/articles/452846/ Блог компании VK - хороший тест на python
                 - https://habr.com/ru/articles/530506/ Patroni и stolon инсталляция и отработка падений. Максим Милютин
                 - https://pgconf.ru/talk/1588646 Как мы выбирали среди patroni, stolon, repmgr Андрей Фефелов Mastery.pro
+  - https://www.youtube.com/watch?v=ZvLw9PU--_w Отказоустойчивый кластер PostgreSQL + Patroni. Реальный опыт внедрения / Виктор Еремченко (Miro)
+  - https://www.youtube.com/watch?v=slkA7qJyW3E patroni+etcd+pgbouncer+haproxy+keepalived
   - https://habr.com/ru/articles/754168/ docker.io/bitnami/postgresql-repmgr , prometheuscommunity/postgres-exporter:v0.11.1
 
   - https://selectel.ru/blog/tutorials/how-to-install-pgbouncer-connection-pooler-for-postgresql/
