@@ -58,6 +58,7 @@ DNS сервисы с SRV записями, компилируется на Go �
   - https://www.youtube.com/watch?v=ZvLw9PU--_w Отказоустойчивый кластер PostgreSQL + Patroni. Реальный опыт внедрения / Виктор Еремченко (Miro)
   - https://www.youtube.com/watch?v=slkA7qJyW3E patroni+etcd+pgbouncer+haproxy+keepalived
   - https://habr.com/ru/articles/754168/ docker.io/bitnami/postgresql-repmgr , prometheuscommunity/postgres-exporter:v0.11.1
+  - https://habr.com/ru/companies/oleg-bunin/articles/489206/ Истории аварий с Patroni, или Как уронить PostgreSQL-кластер
 
   - https://selectel.ru/blog/tutorials/how-to-install-pgbouncer-connection-pooler-for-postgresql/
 
